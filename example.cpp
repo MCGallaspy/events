@@ -55,9 +55,19 @@ int main() {
   ed.addListener<AEvent>(bar);
   // A compile time error. You can't accidentally listen to unhandled events.
   // ed.addListener<BEvent>(bar);
+  
+  // A derived event can be handled by a listener for the base event.
+  ed.connectHandler<DEvent, AEvent>(bar);
+  // This is a compiler error -- DEvent is not derived from BEvent.
+  // ed.connectHandler<DEvent, BEvent>(bar);
 
+  cout << "Posting AEvent..." << endl;
   ed.post(AEvent());
+
+  cout << "Posting BEvent..." << endl;
   ed.post(BEvent());
+
+  cout << "Posting DEvent..." << endl;
   ed.post(DEvent());
 
   return 0;

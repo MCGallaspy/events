@@ -59,6 +59,11 @@ public:
     listeners[std::type_index(typeid(Event))].push_back(el);
   }
 
+  template<class Derived, class Base>
+  void connectHandler(EventListener<Base>* el) {
+    listeners[std::type_index(typeid(Derived))].push_back(el);
+  }
+
 private:
   EventDispatcher() {};
 
