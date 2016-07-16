@@ -2,9 +2,10 @@
 
 A generic event dispatcher and listener implemented in c++
 
+
 # What is this?
 
-A proof of concept inspired by event handling code like this:
+A proof of concept for generic type-safe event handling, intended to be an improvement over code like this:
 
 ```c++
 class Foo : public EventListener {
@@ -31,7 +32,7 @@ What's so bad about it?
 
 * It uses run-time type information (`dynamic_cast`) which can introduce overhead.
 * Switching on `Event::getId` virtual function is clunky and doesn't benefit from type checking.
-* This style encourages a bloated onEvent function when handling many different event types.
+* This style encourages a bloated `onEvent` function when handling many different event types.
 
 # The solution
 
