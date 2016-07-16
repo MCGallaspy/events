@@ -1,6 +1,7 @@
 #include <map>
 #include <typeindex>
 #include <typeinfo>
+#include <type_traits>
 #include <vector>
 
 /* All events must be derived from this, to ensure that overloading
@@ -61,6 +62,7 @@ public:
 
   template<class Derived, class Base>
   void connectHandler(EventListener<Base>* el) {
+    static_assert(!std::is_same<Derived, Base>::value, "Can't connect event handler to itself.");
     listeners[std::type_index(typeid(Derived))].push_back(el);
   }
 
