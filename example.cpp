@@ -59,7 +59,7 @@ int main() {
   // A derived event can be handled by a listener for the base event.
   ed.connectHandler<DEvent, AEvent>(bar);
   // ed.connectHandler<AEvent, AEvent>(bar); // An error.
-  // ed.connectHandler<DEvent, BEvent>(bar); // An error -- DEvent is not derived from BEvent.
+  // ed.connectHandler<BEvent, AEvent>(bar); // An error -- BEvent is not derived from AEvent.
 
   cout << "Posting AEvent..." << endl;
   ed.post(AEvent());
