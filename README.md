@@ -62,4 +62,6 @@ It's also type safe -- it will generate friendly compiler errors if you try to m
 
 # Try it out
 
-I built this using `g++` 5.2.0 and the following command: `g++ events.h example.cpp -std=c++11 -o example`
+I built this using `g++` 5.2.0 and the following command: `g++ events.h example.cpp -std=c++11 -o example -fno-rtti`.
+Convince yourself that this doesn't use RTTI by looking at the last option. ;)
+

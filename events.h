@@ -1,6 +1,4 @@
-#include <map>
-#include <typeindex>
-#include <typeinfo>
+#include <memory>
 #include <type_traits>
 #include <vector>
 
@@ -38,10 +36,22 @@ public:
 template<class Event, class... Others>
 class EventListener<Event, Others...> : public EventListener<Event>, public EventListener<Others...> {};
 
-/* Note that the typeid uses below can be resolved at compile-time.
- * We make no use of run-time type information (RTTI).
+/* EventDispatcher avoids using RTTI by using templated singleton helper classes.
+ * These basically amount to c++14's variable templates.
 */
 class EventDispatcher {
+private:
+  typedef EventListener<>* EventListenerPtr;
+
+  // Essentially a variable template
+  template<class Event>
+  class ListenerHelper {
+  public:
+    typedef std::vector<EventListenerPtr> Vec;
+    typedef std::unique_ptr<Vec> Ptr;
+    static Ptr listeners;
+  };
+
 public:
   static const EventDispatcher& getInstance() {
     static EventDispatcher ed;
@@ -50,24 +60,27 @@ public:
 
   template<class Event>
   void post(const Event& evt) {
-    for (auto listener : listeners[std::type_index(typeid(Event))]) {
+    for (auto listener : (*ListenerHelper<Event>::listeners)) {
       static_cast<EventListener<Event>*>(listener)->onEvent(evt);
     }
   }
 
   template<class Event>
   void addListener(EventListener<Event>* el) {
-    listeners[std::type_index(typeid(Event))].push_back(el);
+    ListenerHelper<Event>::listeners->push_back(static_cast<EventListenerPtr>(el));
   }
 
   template<class Derived, class Base>
   void connectHandler(EventListener<Base>* el) {
     static_assert(!std::is_same<Derived, Base>::value, "Can't connect event handler to itself.");
-    listeners[std::type_index(typeid(Derived))].push_back(el);
+    ListenerHelper<Derived>::listeners->push_back(static_cast<EventListenerPtr>(el));
   }
 
 private:
-  EventDispatcher() {};
-
-  std::map<std::type_index, std::vector<EventListener<>*>> listeners;
+  EventDispatcher() {}
 };
+
+// ZOMG
+// This horrible mess is the static variable definition for ListenerHelper.
+template<class Event>
+typename EventDispatcher::ListenerHelper<Event>::Ptr EventDispatcher::ListenerHelper<Event>::listeners = typename EventDispatcher::ListenerHelper<Event>::Ptr(new typename EventDispatcher::ListenerHelper<Event>::Vec);
