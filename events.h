@@ -73,6 +73,7 @@ public:
   template<class Derived, class Base>
   void connectHandler(EventListener<Base>* el) {
     static_assert(!std::is_same<Derived, Base>::value, "Can't connect event handler to itself.");
+    static_assert(std::is_base_of<Base, Derived>::value, "The 'Derived' event must be derived from the 'Base' event");
     ListenerHelper<Derived>::listeners->push_back(static_cast<EventListenerPtr>(el));
   }
 
