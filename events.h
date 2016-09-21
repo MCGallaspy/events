@@ -26,7 +26,7 @@ class EventListener<> {};
  * an intent, but you must supply the actual onEvent logic.
 */
 template<class Event>
-class EventListener<Event> : public EventListener<> {
+class EventListener<Event> : virtual public EventListener<> {
 public:
   virtual void onEvent(const Event&) = 0;
 };

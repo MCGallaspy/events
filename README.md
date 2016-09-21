@@ -15,11 +15,11 @@ class Foo : public EventListener {
   void onEvent(const Event* evt) {
     switch (evt.getId()) {
       case A_EVENT:
-       AEvent *aEvt = dynamic_cast<AEvent*>(evt);
+       AEvent *aEvt = static_cast<AEvent*>(evt);
        // ...
        break;
       case B_EVENT:
-       BEvent *bEvt = dynamic_cast<BEvent*>(evt);
+       BEvent *bEvt = static_cast<BEvent*>(evt);
        // ...
        break;
        // etc
@@ -30,7 +30,6 @@ class Foo : public EventListener {
 
 What's so bad about it?
 
-* It uses run-time type information (`dynamic_cast`) which can introduce overhead.
 * Switching on `Event::getId` virtual function is clunky and doesn't benefit from type checking.
 * This style encourages a bloated `onEvent` function when handling many different event types.
 
